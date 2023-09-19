@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskPal - Project Task Tracker</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap">
+    <style>
+        /* Modern styles */
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #007BFF;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+        }
+        .logout-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .logout-button:hover {
+            background-color: #0056b3;
+        }
+        .container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            color: #333;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            margin: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Styles for project and task list (moved below the header) */
+        .project-list-container {
+            margin-top: 20px;
+        }
+        .project-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .project-list-item:hover {
+            background-color: #f0f0f0;
+        }
+        .project-list-item .project-info {
+            flex-grow: 1;
+        }
+        .project-list-item .project-info h3 {
+            font-size: 1.5rem;
+        }
+        .project-list-item .project-info p {
+            font-size: 1.2rem;
+            margin: 5px 0;
+        }
+        .project-list-item .project-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .project-list-item .project-actions button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px 10px;
+        }
+        .project-list-item .project-actions button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Styles for editing and adding forms */
+        .edit-form {
+            display: none;
+            text-align: left;
+        }
+        .edit-form input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1.2rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .edit-form .edit-actions {
+            margin-top: 10px;
+            text-align: right;
+        }
+        .edit-form button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 5px 10px;
+        }
+        .edit-form button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Calendar styles */
+        .calendar-container {
+            margin-top: 20px;
+        }
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            text-align: center;
+        }
+        .calendar-header {
+            grid-column: span 7;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        .calendar-day {
+            font-size: 1rem;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .calendar-day:hover {
+            background-color: #007BFF;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>TaskPal - Project Task Tracker</h1>
+        <a href="firstpage.html" class="logout-button">Logout</a>
+    </header>
+    <div class="container">
+        <!-- User input forms for project and task management go here -->
+        <!-- Project List -->
+        <div class="project-list-container">
+            <h2>Project List</h2>
+            <div class="project-list">
+                <!-- Sample project item (you can dynamically generate these) -->
+                <div class="project-list-item">
+                    <div class="project-info">
+                        <h3>Project Name</h3>
+                        <p>Description: Task description goes here.</p>
+                        <p>Deadline: 31/12/2023</p>
+                        <p>Status: In Progress</p>
+                        <p>Category: Work</p>
+                    </div>
+                    <div class="project-actions">
+                        <button onclick="editProject(this)">Edit</button>
+                        <button onclick="deleteProject(this)">Delete</button>
+                    </div>
+                </div>
+            </div>
+            <div class="edit-form" id="project-edit-form">
+                <input type="text" id="project-name" placeholder="New Project Name">
+                <input type="text" id="project-description" placeholder="Project Description">
+                <input type="text" id="project-deadline" placeholder="Deadline (e.g., 31/12/2023)">
+                <select id="project-status">
+                    <option value="Not Started">Not Started</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+                <input type="text" id="project-category" placeholder="Category">
+                <div class="edit-actions">
+                    <button onclick="saveProject(this)">Save Project</button>
+                    <button onclick="cancelEditProject(this)">Cancel</button>
+                    <button onclick="deleteNewProject(this)">Delete</button>
+                </div>
+            </div>
+            <button onclick="showProjectForm()">Add Project</button>
+        </div>
+
+        <!-- Task Management -->
+        <div class="project-list-container">
+            <h2>Task Management</h2>
+            <div class="project-list">
+                <!-- Sample task item (you can dynamically generate these) -->
+                <div class="project-list-item">
+                    <div class="project-info">
+                        <h3>Task Name</h3>
+                        <p>Description: Task description goes here.</p>
+                        <p>Deadline: 31/12/2023</p>
+                        <p>Status: In Progress</p>
+                    </div>
+                    <div class="project-actions">
+                        <button onclick="editTask(this)">Edit</button>
+                        <button onclick="deleteTask(this)">Delete</button>
+                    </div>
+                </div>
+            </div>
+            <div class="edit-form" id="task-edit-form">
+                <input type="text" id="task-name" placeholder="New Task Name">
+                <input type="text" id="task-description" placeholder="Task Description">
+                <input type="text" id="task-deadline" placeholder="Deadline (e.g., 31/12/2023)">
+                <select id="task-status">
+                    <option value="Not Started">Not Started</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+                <div class="edit-actions">
+                    <button onclick="saveTask(this)">Save Task</button>
+                    <button onclick="cancelEditTask(this)">Cancel</button>
+                    <button onclick="deleteNewTask(this)">Delete</button>
+                </div>
+            </div>
+            <button onclick="showTaskForm()">Add Task</button>
+        </div>
+        
+        <!-- Calendar -->
+        <div class="calendar-container">
+            <h2>Calendar</h2>
+            <div id="calendar"></div>
+        </div>
+    </div>
+
+    <!-- FullCalendar Library -->
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.css' rel='stylesheet' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.js'></script>
+
+    <script>
+        // JavaScript for adding, editing, and deleting projects and tasks goes here
+        let newProjectCounter = 0;
+        let newTaskCounter = 0;
+
+        function showProjectForm() {
+            document.getElementById("project-edit-form").style.display = "block";
+        }
+
+        function editProject(button) {
+            const projectInfo = button.parentElement.parentElement.querySelector(".project-info");
+            const projectName = projectInfo.querySelector("h3").innerText;
+            const projectDescription = projectInfo.querySelector("p:nth-child(2)").innerText;
+            const projectDeadline = projectInfo.querySelector("p:nth-child(3)").innerText;
+            const projectStatus = projectInfo.querySelector("p:nth-child(4)").innerText;
+            const projectCategory = projectInfo.querySelector("p:nth-child(5)").innerText;
+
+            document.getElementById("project-name").value = projectName;
+            document.getElementById("project-description").value = projectDescription.replace("Description: ", "");
+            document.getElementById("project-deadline").value = projectDeadline.replace("Deadline: ", "");
+            document.getElementById("project-status").value = projectStatus.replace("Status: ", "");
+            document.getElementById("project-category").value = projectCategory.replace("Category: ", "");
+            
+            projectInfo.style.display = "none";
+            button.style.display = "none";
+            document.getElementById("project-edit-form").style.display = "block";
+        }
+
+        function saveProject(button) {
+            const newProjectName = document.getElementById("project-name").value;
+            const newProjectDescription = document.getElementById("project-description").value;
+            const newProjectDeadline = document.getElementById("project-deadline").value;
+            const newProjectStatus = document.getElementById("project-status").value;
+            const newProjectCategory = document.getElementById("project-category").value;
+
+            if (newProjectName) {
+                // Create a new project list item
+                const projectListItem = document.createElement("div");
+                projectListItem.className = "project-list-item";
+                projectListItem.innerHTML = `
+                    <div class="project-info">
+                        <h3>${newProjectName}</h3>
+                        <p>Description: ${newProjectDescription}</p>
+                        <p>Deadline: ${newProjectDeadline}</p>
+                        <p>Status: ${newProjectStatus}</p>
+                        <p>Category: ${newProjectCategory}</p>
+                    </div>
+                    <div class="project-actions">
+                        <button onclick="editProject(this)">Edit</button>
+                        <button onclick="deleteProject(this)">Delete</button>
+                    </div>
+                `;
+
+                // Insert the new project list item at the beginning of the project list
+                const projectList = document.querySelector(".project-list");
+                projectList.insertBefore(projectListItem, projectList.firstChild);
+
+                // Clear the input fields and hide the edit form
+                document.getElementById("project-name").value = "";
+                document.getElementById("project-description").value = "";
+                document.getElementById("project-deadline").value = "";
+                document.getElementById("project-status").value = "Not Started";
+                document.getElementById("project-category").value = "";
+
+                document.getElementById("project-edit-form").style.display = "none";
+            } else {
+                alert("Project name cannot be empty.");
+            }
+        }
+
+        function deleteProject(button) {
+            const projectItem = button.parentElement.parentElement;
+            projectItem.remove();
+        }
+
+        function cancelEditProject(button) {
+            const projectInfo = button.parentElement.parentElement.querySelector(".project-info");
+            projectInfo.style.display = "block";
+            
+            // Clear the input fields and hide the edit form
+            document.getElementById("project-name").value = "";
+            document.getElementById("project-description").value = "";
+            document.getElementById("project-deadline").value = "";
+            document.getElementById("project-status").value = "Not Started";
+            document.getElementById("project-category").value = "";
+
+            button.style.display = "inline-block";
+            document.getElementById("project-edit-form").style.display = "none";
+        }
+
+        function deleteNewProject(button) {
+            const projectForm = button.parentElement.parentElement;
+            projectForm.style.display = "none";
+        }
+
+        function showTaskForm() {
+            document.getElementById("task-edit-form").style.display = "block";
+        }
+
+        function editTask(button) {
+            const taskInfo = button.parentElement.parentElement.querySelector(".project-info");
+            const taskName = taskInfo.querySelector("h3").innerText;
+            const taskDescription = taskInfo.querySelector("p:nth-child(2)").innerText;
+            const taskDeadline = taskInfo.querySelector("p:nth-child(3)").innerText;
+            const taskStatus = taskInfo.querySelector("p:nth-child(4)").innerText;
+
+            document.getElementById("task-name").value = taskName;
+            document.getElementById("task-description").value = taskDescription.replace("Description: ", "");
+            document.getElementById("task-deadline").value = taskDeadline.replace("Deadline: ", "");
+            document.getElementById("task-status").value = taskStatus.replace("Status: ", "");
+            
+            taskInfo.style.display = "none";
+            button.style.display = "none";
+            document.getElementById("task-edit-form").style.display = "block";
+        }
+
+        function saveTask(button) {
+            const newTaskName = document.getElementById("task-name").value;
+            const newTaskDescription = document.getElementById("task-description").value;
+            const newTaskDeadline = document.getElementById("task-deadline").value;
+            const newTaskStatus = document.getElementById("task-status").value;
+
+            if (newTaskName) {
+                // Create a new task list item
+                const taskListItem = document.createElement("div");
+                taskListItem.className = "project-list-item";
+                taskListItem.innerHTML = `
+                    <div class="project-info">
+                        <h3>${newTaskName}</h3>
+                        <p>Description: ${newTaskDescription}</p>
+                        <p>Deadline: ${newTaskDeadline}</p>
+                        <p>Status: ${newTaskStatus}</p>
+                    </div>
+                    <div class="project-actions">
+                        <button onclick="editTask(this)">Edit</button>
+                        <button onclick="deleteTask(this)">Delete</button>
+                    </div>
+                `;
+
+                // Insert the new task list item at the beginning of the task list
+                const taskList = document.querySelector(".project-list:nth-child(2)");
+                taskList.insertBefore(taskListItem, taskList.firstChild);
+
+                // Clear the input fields and hide the edit form
+                document.getElementById("task-name").value = "";
+                document.getElementById("task-description").value = "";
+                document.getElementById("task-deadline").value = "";
+                document.getElementById("task-status").value = "Not Started";
+
+                document.getElementById("task-edit-form").style.display = "none";
+            } else {
+                alert("Task name cannot be empty.");
+            }
+        }
+
+        function deleteTask(button) {
+            const taskItem = button.parentElement.parentElement;
+            taskItem.remove();
+        }
+
+        function cancelEditTask(button) {
+            const taskInfo = button.parentElement.parentElement.querySelector(".project-info");
+            taskInfo.style.display = "block";
+            
+            // Clear the input fields and hide the edit form
+            document.getElementById("task-name").value = "";
+            document.getElementById("task-description").value = "";
+            document.getElementById("task-deadline").value = "";
+            document.getElementById("task-status").value = "Not Started";
+
+            button.style.display = "inline-block";
+            document.getElementById("task-edit-form").style.display = "none";
+        }
+
+        function deleteNewTask(button) {
+            const taskForm = button.parentElement.parentElement;
+            taskForm.style.display = "none";
+        }
+
+        function completeProject(button) {
+            const projectItem = button.parentElement.parentElement;
+            projectItem.style.backgroundColor = "#7FFF7F"; // Change background color to green
+            button.style.display = "none"; // Hide the Complete button
+        }
+
+        // Initialize FullCalendar
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: [
+                    {
+                        title: 'Event 1',
+                        start: '2023-09-05',
+                        end: '2023-09-07',
+                        backgroundColor: '#007BFF',
+                        borderColor: '#007BFF',
+                        textColor: '#fff',
+                    },
+                    {
+                        title: 'Event 2',
+                        start: '2023-09-10',
+                        end: '2023-09-12',
+                        backgroundColor: '#007BFF',
+                        borderColor: '#007BFF',
+                        textColor: '#fff',
+                    },
+                    // Add more events here
+                ],
+            });
+            calendar.render();
+        });
+    </script>
+</body>
+</html>
